@@ -1,25 +1,22 @@
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Gestión de estudiantes</h1>
     </div>
   );
 }
 
 export default App;
+
+
+
+// Aplicación web en react que permita contar con la Creación, Eliminación, Listado y Edición de elementos.
+// El elemento debe contener mínimo 7 campos al momento de crearlos y editarlos.
+// Conectar la aplicación con una base de datos en Firebase
+// Subir la aplicación a AWS Amplify y a Netlify
+// Validar todos los campos
+// Subir en la raíz del proyecto un archivo llamado links.txt que contenga el link de amplify y el de Netlify
+// El proyecto debe tener mínimo 5 commits
+// Dos ramas develop y main
