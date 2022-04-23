@@ -79,6 +79,17 @@ export default function Home() {
     }
   }
 
+  const deleteStudent = async (id) =>{
+    try{
+        const database = firebase.firestore()
+        await database.collection('estudiantes').doc(id).delete()
+        const newList = list.filter(item => item.id !== id)
+        setList(newList)
+    }catch(error){
+        console.log(error)
+    }
+  }
+
   return(
     <div className="container-fluid p-5">
       <div className="header mb-5">
@@ -165,7 +176,7 @@ export default function Home() {
                   <FontAwesomeIcon icon={faUserGraduate}/>
                 </span>
                 <input 
-                  type="number" class="form-control" min={1}
+                  type="number" class="form-control" min={1} max={10}
                   placeholder="Semestre" required
                   onChange={(e)=>setSemester(e.target.value)}
                 />
@@ -205,8 +216,16 @@ export default function Home() {
                 <td>{stu.career}</td>
                 <td>{stu.semester}</td>
                 <td>
-                  <FontAwesomeIcon icon={faUserPen} type="button" className="pe-2 fs-5 text-primary" title="Editar" />
-                  <FontAwesomeIcon icon={faTrashCan} type="button" className="fs-5 text-danger" title="Eliminar"/>
+                  <FontAwesomeIcon 
+                    icon={faUserPen} type="button" 
+                    className="pe-2 fs-5 text-primary" title="Editar" 
+                    onClick={()=>setId(stu.id)}
+                  />
+                  <FontAwesomeIcon 
+                    icon={faTrashCan} type="button" 
+                    className="fs-5 text-danger" title="Eliminar"
+                    onClick={()=>deleteStudent(stu.id)}
+                  />
                 </td>
               </tr>
             ))
