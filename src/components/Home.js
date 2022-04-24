@@ -245,7 +245,7 @@ export default function Home() {
           {
             list.length > 0 &&
             list.map((stu, index)=>(
-              <tr>
+              <tr key={index}>
                 <th scope="row">{index}</th>
                 {
                   stateEdit && stu.id==id ?

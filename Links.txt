@@ -1,0 +1,2 @@
+Amplify : https://main.dhk0m5grl21s7.amplifyapp.com/
+Netlify : https://react-firebase-bp.netlify.app/
