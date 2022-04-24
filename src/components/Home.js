@@ -248,7 +248,7 @@ export default function Home() {
               <tr key={index}>
                 <th scope="row">{index}</th>
                 {
-                  stateEdit && stu.id==id ?
+                  stateEdit && stu.id===id ?
                   <>
                     <td>
                       <input 
