@@ -255,6 +255,9 @@ export default function Home() {
                         type="text" className="form-control" value={name}
                         onChange={(e)=>setName(e.target.value)}
                       />
+                      {
+                        error ? <span className='text-danger error my-1'>{error}</span> : null
+                      }
                     </td>
                     <td>
                       <input 

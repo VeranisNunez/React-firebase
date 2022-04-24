@@ -3,3 +3,10 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.error{
+  display: flex;
+  text-align: left;
+  font-size: small;
+  font-weight: bold;
+}
