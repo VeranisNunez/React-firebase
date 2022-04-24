@@ -1,6 +1,7 @@
 import "./styles.css" 
 import {firebase} from '../firebase'
 import {nanoid} from 'nanoid'
+import { useEffect, useState } from "react"
 
 //-- Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -11,7 +12,9 @@ import { faAddressCard } from '@fortawesome/free-solid-svg-icons'
 import { faPhoneFlip } from '@fortawesome/free-solid-svg-icons'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import { faUserGraduate } from '@fortawesome/free-solid-svg-icons'
-import { useEffect, useState } from "react"
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+
 
 export default function Home() {
 
@@ -28,16 +31,15 @@ export default function Home() {
 
   const [stateAdd, setStateAdd] = useState(false)
   const [stateEdit, setStateEdit] = useState(false)
+  const [error, setError] = useState(null)
 
   useEffect(()=>{
     const getData = async () =>{
       try{
         const database = firebase.firestore()
-        const data = await database.collection('estudiantes').get()
+        const data = await database.collection('students').get()
         const array = data.docs.map(item =>(
-          {
-            id:item.id, ...item.data()
-          }
+          { id:item.id, ...item.data() }
         ))
         setList(array)
       }catch(error){
@@ -60,19 +62,19 @@ export default function Home() {
         career:career,
         semester:semester
       }
-      await database.collection('estudiantes').add(newStudent)
+      await database.collection('students').add(newStudent)
       setStateAdd(false)
       setList([...list,
-          {
-            id:nanoid(), 
-            name:name,
-            lastname:lastname,
-            ide:ide,
-            tel:tel,
-            email:email,
-            career:career,
-            semester:semester
-          }
+        {
+          id:nanoid(), 
+          name:name,
+          lastname:lastname,
+          ide:ide,
+          tel:tel,
+          email:email,
+          career:career,
+          semester:semester
+        }
       ])
     } catch (error) {
       console.log(error)
@@ -81,13 +83,50 @@ export default function Home() {
 
   const deleteStudent = async (id) =>{
     try{
-        const database = firebase.firestore()
-        await database.collection('estudiantes').doc(id).delete()
-        const newList = list.filter(item => item.id !== id)
-        setList(newList)
+      const database = firebase.firestore()
+      await database.collection('students').doc(id).delete()
+      const newList = list.filter(item => item.id !== id)
+      setList(newList)
     }catch(error){
-        console.log(error)
+      console.log(error)
     }
+  }
+
+  const editStudent = async (id) =>{
+    if(!name.trim()){ setError('Campo nombre vacío'); return }
+    if(!lastname.trim()){ setError('Campo apellido vacío'); return }
+    if(!ide.trim()){ setError('Campo identificación vacío'); return }
+    if(!tel.trim()){ setError('Campo teléfono vacío'); return }
+    if(!email.trim()){ setError('Campo email vacío'); return }
+    if(!career.trim()){ setError('Campo carrera vacío'); return }
+    if(!semester.trim()){ setError('Campo semestre vacío'); return }
+    try{
+      const database = firebase.firestore()
+      await database.collection('students').doc(id).update({
+        name:name,
+        lastname:lastname,
+        ide:ide,
+        tel:tel,
+        email:email,
+        career:career,
+        semester:semester
+      })
+    }catch(error){
+      console.log(error)
+    }
+    setStateEdit(!stateEdit)
+    setError(false)
+  }
+
+  const auxEdit = async (stu) => {
+    setName(stu.name)
+    setLastName(stu.lastname)
+    setIde(stu.ide)
+    setTel(stu.tel)
+    setEmail(stu.email)
+    setCareer(stu.career)
+    setSemester(stu.semester)
+    setStateEdit(!stateEdit)
   }
 
   return(
@@ -108,75 +147,75 @@ export default function Home() {
       {stateAdd &&
         <div className="conteiner-add mb-5">
           <form onSubmit={add}>
-            <div class="row g-3 input-group mb-3">
+            <div className="row g-3 input-group mb-3">
               <div className="col-md d-flex">
-                <span class="input-group-text">
+                <span className="input-group-text">
                   <FontAwesomeIcon icon={faUser}/>
                 </span>
                 <input 
-                  type="text" class="form-control" 
+                  type="text" className="form-control" 
                   placeholder="Nombre" required
                   onChange={(e)=>setName(e.target.value)}
                 />
               </div>
               <div className="col-md d-flex">
-                <span class="input-group-text">
+                <span className="input-group-text">
                   <FontAwesomeIcon icon={faUser}/>
                 </span>
                 <input 
-                  type="text" class="form-control" 
+                  type="text" className="form-control" 
                   placeholder="Apellido" required
                   onChange={(e)=>setLastName(e.target.value)}
                 />
               </div>
               <div className="col-md d-flex">
-                <span class="input-group-text">
+                <span className="input-group-text">
                   <FontAwesomeIcon icon={faAddressCard}/>
                 </span>
                 <input 
-                  type="text" class="form-control" min={1}
+                  type="text" className="form-control" min={1}
                   placeholder="Identificación" required
                   onChange={(e)=>setIde(e.target.value)}
                 />
               </div>
               <div className="col-md d-flex">
-                <span class="input-group-text">
+                <span className="input-group-text">
                   <FontAwesomeIcon icon={faPhoneFlip}/>
                 </span>
                 <input 
-                  type="number" class="form-control" min={1}
+                  type="number" className="form-control" min={1}
                   placeholder="Teléfono" required
                   onChange={(e)=>setTel(e.target.value)}
                 />
               </div>
             </div>
-            <div class="row g-3 input-group mb-3">
+            <div className="row g-3 input-group mb-3">
               <div className="col-md d-flex">
-                <span class="input-group-text">
+                <span className="input-group-text">
                   <FontAwesomeIcon icon={faEnvelope}/>
                 </span>
                 <input 
-                  type="email" class="form-control" 
+                  type="email" className="form-control" 
                   placeholder="Email" required
                   onChange={(e)=>setEmail(e.target.value)}
                 />
               </div>
               <div className="col-md d-flex">
-                <span class="input-group-text">
+                <span className="input-group-text">
                   <FontAwesomeIcon icon={faUserGraduate}/>
                 </span>
                 <input 
-                  type="text" class="form-control" 
+                  type="text" className="form-control" 
                   placeholder="Carrera" required
                   onChange={(e)=>setCareer(e.target.value)}
                 />
               </div>
               <div className="col-md d-flex">
-                <span class="input-group-text">
+                <span className="input-group-text">
                   <FontAwesomeIcon icon={faUserGraduate}/>
                 </span>
                 <input 
-                  type="number" class="form-control" min={1} max={10}
+                  type="number" className="form-control" min={1} max={10}
                   placeholder="Semestre" required
                   onChange={(e)=>setSemester(e.target.value)}
                 />
@@ -188,7 +227,7 @@ export default function Home() {
           </form>
         </div>
       }
-      <table class="table table-hover">
+      <table className="table table-hover">
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -208,25 +247,87 @@ export default function Home() {
             list.map((stu, index)=>(
               <tr>
                 <th scope="row">{index}</th>
-                <td>{stu.name}</td>
-                <td>{stu.lastname}</td>
-                <td>{stu.ide}</td>
-                <td>{stu.tel}</td>
-                <td>{stu.email}</td>
-                <td>{stu.career}</td>
-                <td>{stu.semester}</td>
-                <td>
-                  <FontAwesomeIcon 
-                    icon={faUserPen} type="button" 
-                    className="pe-2 fs-5 text-primary" title="Editar" 
-                    onClick={()=>setId(stu.id)}
-                  />
-                  <FontAwesomeIcon 
-                    icon={faTrashCan} type="button" 
-                    className="fs-5 text-danger" title="Eliminar"
-                    onClick={()=>deleteStudent(stu.id)}
-                  />
-                </td>
+                {
+                  stateEdit && stu.id==id ?
+                  <>
+                    <td>
+                      <input 
+                        type="text" className="form-control" value={name}
+                        onChange={(e)=>setName(e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input 
+                        type="text" className="form-control" value={lastname}
+                        onChange={(e)=>setLastName(e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input 
+                        type="text" className="form-control" value={ide}
+                        onChange={(e)=>setIde(e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input 
+                        type="text" className="form-control" value={tel}
+                        onChange={(e)=>setTel(e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input 
+                        type="text" className="form-control" value={email}
+                        onChange={(e)=>setEmail(e.target.value)}
+                      />
+                    </td>
+                    <td>
+                    <input 
+                        type="text" className="form-control" value={career}
+                        onChange={(e)=>setCareer(e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input 
+                        type="text" className="form-control" value={semester}
+                        onChange={(e)=>setSemester(e.target.value)}
+                      />
+                    </td>
+                    <td className="buttons">
+                      <FontAwesomeIcon 
+                        icon={faCircleCheck} type="button" 
+                        className="pe-2 fs-4 text-success" title="Editar" 
+                        onClick={()=>{editStudent(stu.id)}}
+                      />
+                      <FontAwesomeIcon 
+                        icon={faCircleXmark} type="button" 
+                        className="fs-4 text-danger" title="Cancelar" 
+                        onClick={()=>{setStateEdit(!stateEdit); setError(false)}}
+                      />
+                    </td>
+                  </>
+                  :
+                  <>
+                    <td>{stu.name}</td>
+                    <td>{stu.lastname}</td>
+                    <td>{stu.ide}</td>
+                    <td>{stu.tel}</td>
+                    <td>{stu.email}</td>
+                    <td>{stu.career}</td>
+                    <td>{stu.semester}</td>
+                    <td>
+                      <FontAwesomeIcon 
+                        icon={faUserPen} type="button" 
+                        className="pe-2 fs-5 text-primary" title="Editar" 
+                        onClick={()=>{setId(stu.id); auxEdit(stu)}}
+                      />
+                      <FontAwesomeIcon 
+                        icon={faTrashCan} type="button" 
+                        className="fs-5 text-danger" title="Eliminar"
+                        onClick={()=>deleteStudent(stu.id)}
+                      />
+                    </td>
+                  </>
+                }
               </tr>
             ))
           }
